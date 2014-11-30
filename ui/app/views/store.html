@@ -1,1 +1,10 @@
-<p>This is the store view.</p>
+<header>
+  <h1 class="text-center">Products in store</h1>
+</header>
+<div class="list-group">
+  <div class="list-group-item" ng-repeat="product in products">
+    <h4>{{product.name}} ({{product.quantity}} pcs left)
+      <em class="pull-right">{{product.price | currency}}</em>
+    </h4>
+  </div>
+</div>

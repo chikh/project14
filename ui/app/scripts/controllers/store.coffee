@@ -8,9 +8,7 @@
  # Controller of the uiApp
 ###
 angular.module('uiApp')
-  .controller 'StoreCtrl', ($scope) ->
-    $scope.awesomeThings = [
-      'HTML5 Boilerplate'
-      'AngularJS'
-      'Karma'
-    ]
+  .controller 'StoreCtrl', ($scope, storeRest) ->
+    $scope.products = []
+
+    storeRest.listProducts() .then (products) -> $scope.products = products
