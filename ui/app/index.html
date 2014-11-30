@@ -15,7 +15,7 @@
     <link rel="stylesheet" href="styles/main.css">
     <!-- endbuild -->
   </head>
-  <body ng-app="uiApp">
+  <body ng-app="uiApp" ng-controller="GlobalcartCtrl">
     <!--[if lt IE 7]>
       <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
     <![endif]-->
@@ -26,6 +26,7 @@
         <ul class="nav nav-pills pull-right">
           <li class="active"><a ng-href="#">Home</a></li>
           <li><a ng-href="#/store">Store</a></li>
+          <li><a ng-href="#/cart">Cart</a></li>
         </ul>
         <h3 class="text-muted">Product store</h3>
       </div>
@@ -73,12 +74,12 @@
         <!-- build:js({.tmp,app}) scripts/scripts.js -->
         <script src="scripts/app.js"></script>
         <script src="scripts/controllers/main.js"></script>
-        <script src="scripts/controllers/about.js"></script>
         <script src="scripts/controllers/store.js"></script>
         <script src="scripts/services/storerest.js"></script>
         <script src="scripts/controllers/signup.js"></script>
         <script src="scripts/directives/mongooseerror.js"></script>
         <script src="scripts/controllers/cart.js"></script>
+        <script src="scripts/controllers/globalcart.js"></script>
         <!-- endbuild -->
 </body>
 </html>

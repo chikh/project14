@@ -1,0 +1,29 @@
+<h1>Your Order</h1>
+<div ng-hide="isNotEmpty()" class="alert alert-info">No items in the
+  cart
+</div>
+<div ng-show="isNotEmpty()">
+  <table class="table-striped table">
+    <thead>
+    <tr class="h3">
+      <th>Name</th>
+      <th>Quantity</th>
+      <th>Price per item</th>
+      <th>Total</th>
+      <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr ng-repeat="item in $parent.productsInCart" class="h4">
+      <td>{{item.name}}</td>
+      <td><input ng-model='item.preOrderQuantity'></td>
+      <td>{{item.price | currency}}</td>
+      <td>{{item.price * item.preOrderQuantity | currency}}</td>
+      <td>
+        <button ng-click="$parent.remove($index)" class="btn btn-danger">Remove</button>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+  <input class="form-control btn btn-success btn-lg" type="button" value="Order" ng-click="makeOrder()"/>
+</div>

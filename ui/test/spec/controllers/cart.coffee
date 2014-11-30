@@ -1,17 +1,16 @@
 'use strict'
 
-describe 'Controller: SignupCtrl', ->
+describe 'Controller: CartCtrl', ->
 
   # load the controller's module
   beforeEach module 'uiApp'
 
-  SignupCtrl = {}
+  CartCtrl = {}
   scope = {}
 
   # Initialize the controller and a mock scope
   beforeEach inject ($controller, $rootScope) ->
     scope = $rootScope.$new()
-    SignupCtrl = $controller 'SignupCtrl', {
+    CartCtrl = $controller 'CartCtrl', {
       $scope: scope
     }
-

@@ -1,10 +1,20 @@
 <header>
   <h1 class="text-center">Products in store</h1>
 </header>
+<div ng-hide="isNotEmpty()" class="alert alert-info">No products in the
+  store. You are not signed in or there is a problem.
+</div>
 <div class="list-group">
   <div class="list-group-item" ng-repeat="product in products">
     <h4>{{product.name}} ({{product.quantity}} pcs left)
-      <em class="pull-right">{{product.price | currency}}</em>
+      <em>{{product.price | currency}}</em>
+      <div class="pull-right top-right">
+        <input ng-model="product.preOrderInfo.quantity" type="number" placeholder="Quantity" class="form-group"/>
+        <a type="button" class="btn btn-success" ng-click="addToCart(product)" ng-disabled="!checkQuantityCorrectness(product)"><span class="glyphicon glyphicon-plus-sign"></span></a>
+      </div>
     </h4>
+  </div>
+  <div>
+    <a type="button" class="btn-lg btn btn-info center-block" ng-href="#/cart">Procceed to Cart</a>
   </div>
 </div>

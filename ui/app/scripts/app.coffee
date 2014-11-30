@@ -28,6 +28,9 @@ angular
       .when '/signup',
         templateUrl: 'views/signup.html'
         controller: 'SignupCtrl'
+      .when '/cart',
+        templateUrl: 'views/cart.html'
+        controller: 'CartCtrl'
       .otherwise
         redirectTo: '/'
 

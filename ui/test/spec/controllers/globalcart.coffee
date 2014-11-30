@@ -1,19 +1,16 @@
 'use strict'
 
-describe 'Controller: AboutCtrl', ->
+describe 'Controller: GlobalcartCtrl', ->
 
   # load the controller's module
   beforeEach module 'uiApp'
 
-  AboutCtrl = {}
+  GlobalcartCtrl = {}
   scope = {}
 
   # Initialize the controller and a mock scope
   beforeEach inject ($controller, $rootScope) ->
     scope = $rootScope.$new()
-    AboutCtrl = $controller 'AboutCtrl', {
+    GlobalcartCtrl = $controller 'GlobalcartCtrl', {
       $scope: scope
     }
-
-  it 'should attach a list of awesomeThings to the scope', ->
-    expect(scope.awesomeThings.length).toBe 3
