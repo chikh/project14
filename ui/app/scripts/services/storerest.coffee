@@ -5,7 +5,6 @@ class StoreRest
   constructor: (@$http, @$q, @$log) ->
 
   listProducts: () ->
-    @$log.debug "listUsers()"
     deferred = @$q.defer()
 
     @$http.get("/products")
@@ -15,6 +14,21 @@ class StoreRest
     )
     .error((data, status, headers) =>
       @$log.error("Failed to list products - status #{status}")
+      deferred.reject(data);
+    )
+    deferred.promise
+
+  createUser: (user) ->
+    @$log.debug "createUser #{angular.toJson(user, true)}"
+    deferred = @$q.defer()
+
+    @$http.post('/user', user)
+    .success((data, status, headers) =>
+      @$log.debug("Successfully created User - status #{status}")
+      deferred.resolve(data)
+    )
+    .error((data, status, headers) =>
+      @$log.error("Failed to create user - status #{status}")
       deferred.reject(data);
     )
     deferred.promise

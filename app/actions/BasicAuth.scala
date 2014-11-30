@@ -21,14 +21,14 @@ object BasicAuth {
   }
 
   private def user(info: UserInfo) = {
-    DbEmulator.collection[User].find(info.name)
+    DbEmulator.collection[User].find(info.login)
   }
 
   def authenticatedAsync(action: String => Future[Result]) = Security.Authenticated(
     _.headers.get(AUTHORIZATION).flatMap(_.userInfo).map(user),
     _ => unauthorized
   )(userFuture => Action.async(
-    userFuture.flatMap(_.map(user => action(user.name)).getOrElse(Future.successful(unauthorized)))
+    userFuture.flatMap(_.map(user => action(user.email)).getOrElse(Future.successful(unauthorized)))
   ))
 
   private def unauthorized = {
@@ -36,4 +36,4 @@ object BasicAuth {
   }
 }
 
-case class UserInfo(name: String, password: String)
+case class UserInfo(login: String, password: String)

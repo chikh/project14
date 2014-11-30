@@ -1,9 +1,9 @@
 package models
 
 case class User(
-                 name: String,
+                 email: String,
                  password: String
                  )
   extends WithId {
-  def id: String = name
+  def id: String = email
 }
