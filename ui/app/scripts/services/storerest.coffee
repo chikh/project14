@@ -10,7 +10,7 @@ class StoreRest
 
     @$http.get("/products")
     .success((data, status, headers) =>
-      @$log.info("Successfully listed products - status #{status}")
+      @$log.debug("Successfully listed products - status #{status}")
       deferred.resolve(data)
     )
     .error((data, status, headers) =>

@@ -2,14 +2,14 @@ package controllers
 
 import actions.{BasicAuth, UserInfo}
 import models.Product
-import models.Product._
+import play.api.libs.concurrent.Execution.Implicits._
 import play.api.libs.json.Json
 import play.api.mvc._
 
 object Application extends Controller {
 
   def products = BasicAuth.withUser {
-    case UserInfo(name, password) => Action(Ok(Json.toJson(Product.list)))
+    case UserInfo(name, password) => Action.async(Product.list.map(Json.toJson(_)).map(Ok(_)))
   }
 
 }
