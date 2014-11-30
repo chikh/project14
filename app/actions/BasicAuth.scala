@@ -20,12 +20,12 @@ object BasicAuth {
     }
   }
 
-  private def user(info: UserInfo) = {
-    DbEmulator.collection[User].find(info.login)
+  private def validUserAccount(info: UserInfo) = {
+    DbEmulator.collection[User].find(info.login).map(_.filter(_.password == info.password))
   }
 
   def authenticatedAsync(action: String => Future[Result]) = Security.Authenticated(
-    _.headers.get(AUTHORIZATION).flatMap(_.userInfo).map(user),
+    _.headers.get(AUTHORIZATION).flatMap(_.userInfo).map(validUserAccount),
     _ => unauthorized
   )(userFuture => Action.async(
     userFuture.flatMap(_.map(user => action(user.email)).getOrElse(Future.successful(unauthorized)))
