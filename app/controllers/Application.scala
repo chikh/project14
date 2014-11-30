@@ -1,12 +1,15 @@
 package controllers
 
-import play.api._
+import actions.{BasicAuth, UserInfo}
+import models.Product
+import models.Product._
+import play.api.libs.json.Json
 import play.api.mvc._
 
 object Application extends Controller {
 
-  def index = Action {
-    Ok(views.html.index("Your new application is ready."))
+  def products = BasicAuth.withUser {
+    case UserInfo(name, password) => Action(Ok(Json.toJson(Product.list)))
   }
 
 }
