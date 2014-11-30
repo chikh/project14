@@ -1,7 +1,12 @@
 package actions
 
 import controllers.Application._
-import play.api.mvc.{AnyContent, Action, Security}
+import db.DbEmulator
+import models.User
+import play.api.mvc.{Action, Result, Security}
+import play.api.libs.concurrent.Execution.Implicits._
+
+import scala.concurrent.Future
 
 object BasicAuth {
   private implicit def toUserInfoHelper(authHeaderContent: String): Object {def userInfo: Option[UserInfo]} = new {
@@ -15,10 +20,20 @@ object BasicAuth {
     }
   }
 
-  def withUser(action: UserInfo => Action[AnyContent]) = Security.Authenticated(
-    _.headers.get(AUTHORIZATION).flatMap(_.userInfo),
-    _ => Unauthorized(views.html.defaultpages.unauthorized()).withHeaders("WWW-Authenticate" -> "Basic realm=\"Secured\"")
-  )(action)
+  private def user(info: UserInfo) = {
+    DbEmulator.collection[User].find(info.name)
+  }
+
+  def authenticatedAsync(action: String => Future[Result]) = Security.Authenticated(
+    _.headers.get(AUTHORIZATION).flatMap(_.userInfo).map(user),
+    _ => unauthorized
+  )(userFuture => Action.async(
+    userFuture.flatMap(_.map(user => action(user.name)).getOrElse(Future.successful(unauthorized)))
+  ))
+
+  private def unauthorized = {
+    Unauthorized(views.html.defaultpages.unauthorized()).withHeaders("WWW-Authenticate" -> "Basic realm=\"Secured\"")
+  }
 }
 
 case class UserInfo(name: String, password: String)
