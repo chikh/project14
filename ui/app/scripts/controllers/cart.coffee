@@ -11,7 +11,10 @@ angular.module('uiApp')
   .controller 'CartCtrl', ($scope, storeRest) ->
     $scope.makeOrder = ->
       storeRest.makeOrder
-        products: $scope.$parent.productsInCart
+        products: $scope.$parent.productsInCart.map((product) ->
+          productId: product.id,
+          preOrderedQuantity: product.preOrderQuantity
+        )
       .then (data) ->
         $scope.$parent.productsInCart = [];
         delete $scope.errorMessage

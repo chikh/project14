@@ -19,10 +19,23 @@ object Application extends Controller {
   def makeOrder = BasicAuth.authenticatedAsync(parse.json) {
     (request, userName) =>
       request.body.validate[Order].map {
-        order =>
-          collection[Product].update(order.products).map(_ =>
-            Ok("%s, your order successfully accepted!" format userName.capitalize)
-          )
+        order => {
+          def checkProductQuantityAvailability(existingProducts: List[Product]): Boolean = {
+            order.products.forall(
+              orderItem => existingProducts.find(_.id == orderItem.productId).exists(_.quantity - orderItem.preOrderedQuantity >= 0) //todo: reduce complexity of N^2
+            )
+          }
+
+          collection[Product].update(
+            _.map(p => p -> order.products.find(_.productId == p.id).map(_.preOrderedQuantity)).collect {
+              case (product, Some(orderedQuantity)) => product.copy(quantity = product.quantity - orderedQuantity)
+            },
+            checkProductQuantityAvailability
+          ).map {
+            case true => Ok("%s, your order successfully accepted!" format userName.capitalize)
+            case false => Conflict("Insufficient amount of one of the products")
+          }
+        }
       }.getOrElse(Future.successful(BadRequest("Invalid json")))
   }
 }
