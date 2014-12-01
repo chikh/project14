@@ -29,12 +29,12 @@ angular.module('uiApp')
       product.preOrderInfo and product.preOrderInfo.quantity > 0 and product.quantity >= product.preOrderInfo.quantity
 
     $scope.addToCart = (product) ->
-      product.quantity = product.quantity - product.preOrderInfo.quantity
-      product.preOrderQuantity = product.preOrderInfo.quantity
+      preOrderQuantity = product.preOrderInfo.quantity
       delete product.preOrderInfo
+      product.quantity = product.quantity - preOrderQuantity
       alreadyExistingInCart = findExistingInCart(product)
       if (alreadyExistingInCart)
-        alreadyExistingInCart.preOrderQuantity = product.preOrderQuantity + alreadyExistingInCart.preOrderQuantity
+        alreadyExistingInCart.preOrderQuantity = preOrderQuantity + alreadyExistingInCart.preOrderQuantity
       else
+        product.preOrderQuantity = preOrderQuantity
         $scope.$parent.productsInCart.push(product)
-
