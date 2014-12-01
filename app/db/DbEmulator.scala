@@ -41,17 +41,17 @@ class DbEmulatorCollection[T <: WithId](defaultItems: List[T] = Nil) {
   }
 
   def insert(entity: T): Future[Option[T]] = futureResult {
-    storage.compareAndSetFun(v => entity :: v)
+    storage.compareAndSetFun(entity :: _)
     Some(entity)
   }
 
   def update(entity: T): Future[Option[T]] = futureResult {
-    storage.compareAndSetFun(v => entity :: v.filterNot(_.id == entity.id))
+    storage.compareAndSetFun(entity :: _.filterNot(_.id == entity.id))
     Some(entity)
   }
 
   def update(entities: List[T]): Future[Option[List[T]]] = futureResult {
-    storage.compareAndSetFun(v => entities ++ v.filterNot(id => entities.exists(_.id == id))) //todo: reduce complexity
+    storage.compareAndSetFun(entities ++ _.filterNot(id => entities.exists(_.id == id))) //todo: reduce complexity
     Some(entities)
   }
 
