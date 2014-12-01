@@ -3,16 +3,18 @@
 # ~~~~
 
 # Home page
-GET        /                    com.tuplejump.playYeoman.Yeoman.redirectRoot(base="/ui/")
+GET         /                    com.tuplejump.playYeoman.Yeoman.redirectRoot(base="/ui/")
 
-GET        /ui                  com.tuplejump.playYeoman.Yeoman.index
+GET         /ui                  com.tuplejump.playYeoman.Yeoman.index
 
-->         /ui/                 yeoman.Routes
+->          /ui/                 yeoman.Routes
 
 # Map static resources from the /public folder to the /assets URL path
-GET        /assets/*file        controllers.Assets.at(path="/public", file)
+GET         /assets/*file        controllers.Assets.at(path="/public", file)
 
 # REST API
-GET        /products            controllers.Application.products
+GET         /products            controllers.Application.products
 
-POST       /user                controllers.Users.createUser
+POST        /user                controllers.Users.createUser
+
+POST        /order               controllers.Application.makeOrder

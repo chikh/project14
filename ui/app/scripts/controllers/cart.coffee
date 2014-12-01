@@ -10,6 +10,14 @@
 angular.module('uiApp')
   .controller 'CartCtrl', ($scope, storeRest) ->
     $scope.makeOrder = ->
-      alert 'todo'
+      storeRest.makeOrder
+        products: $scope.$parent.productsInCart
+      .then (data) ->
+        $scope.$parent.productsInCart = [];
+        delete $scope.errorMessage
+        $scope.successMessage = data;
+      .catch (error) ->
+        delete $scope.successMessage
+        $scope.errorMessage = error;
 
     $scope.isNotEmpty = -> $scope.$parent.productsInCart and $scope.$parent.productsInCart.length > 0

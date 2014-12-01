@@ -1,7 +1,9 @@
-<h1>Your Order</h1>
-<div ng-hide="isNotEmpty()" class="alert alert-info">No items in the
-  cart
-</div>
+<header>
+  <h1 class="text-center">Your Order</h1>
+</header>
+<div ng-hide="isNotEmpty()" class="alert alert-info">No items in the cart</div>
+<div ng-show="errorMessage" class="alert alert-danger">Error occured: {{errorMessage}}</div>
+<div ng-show="successMessage" class="alert alert-success">{{successMessage}}</div>
 <div ng-show="isNotEmpty()">
   <table class="table-striped table">
     <thead>
@@ -25,5 +27,7 @@
     </tr>
     </tbody>
   </table>
-  <input class="form-control btn btn-success btn-lg" type="button" value="Order" ng-click="makeOrder()"/>
+  <div class="list-group">
+    <a class="center-block btn btn-success btn-lg" type="button" ng-click="makeOrder()">Order</a>
+  </div>
 </div>

@@ -33,6 +33,21 @@ class StoreRest
     )
     deferred.promise
 
+  makeOrder: (order) ->
+    @$log.debug "make order #{angular.toJson(order, true)}"
+    deferred = @$q.defer()
+
+    @$http.post('/order', order)
+    .success((data, status, headers) =>
+      @$log.debug("Successfully made order - status #{status}")
+      deferred.resolve(data)
+    )
+    .error((data, status, headers) =>
+      @$log.error("Failed to make order - status #{status}")
+      deferred.reject(data);
+    )
+    deferred.promise
+
 ###*
  # @ngdoc service
  # @name uiApp.storeRest
