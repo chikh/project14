@@ -18,7 +18,7 @@
     <tbody>
     <tr ng-repeat="item in $parent.productsInCart" class="h4">
       <td>{{item.name}}</td>
-      <td><input ng-model='item.preOrderQuantity'></td>
+      <td><input ng-model='item.preOrderQuantity' type="number"></td>
       <td>{{item.price | currency}}</td>
       <td>{{item.price * item.preOrderQuantity | currency}}</td>
       <td>
