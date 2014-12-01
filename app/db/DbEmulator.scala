@@ -21,8 +21,18 @@ object DbEmulator {
 }
 
 class DbEmulatorCollection[T <: WithId](defaultItems: List[T] = Nil) {
-  private val InitialDelay = 100
-  private val MaxRandomDelay = 200
+  private val InitialDelay = 150
+  private val MaxRandomDelay = 100
+
+  implicit private def toRichAtomicReference[V](atomicReference: AtomicReference[V]) = new {
+    def compareAndSetFun(newValueFromOld: V => V): Unit = {
+      while (true) {
+        val oldValue = atomicReference.get
+        if (atomicReference.compareAndSet(oldValue, newValueFromOld(oldValue)))
+          return
+      }
+    }
+  }
 
   private val storage = new AtomicReference[List[T]](defaultItems)
 
@@ -31,17 +41,22 @@ class DbEmulatorCollection[T <: WithId](defaultItems: List[T] = Nil) {
   }
 
   def insert(entity: T): Future[Option[T]] = futureResult {
-    storage.getAndSet(entity :: storage.get())
+    storage.compareAndSetFun(v => entity :: v)
     Some(entity)
   }
 
   def update(entity: T): Future[Option[T]] = futureResult {
-    storage.getAndSet(entity :: storage.get().filterNot(_.id == entity.id))
+    storage.compareAndSetFun(v => entity :: v.filterNot(_.id == entity.id))
     Some(entity)
   }
 
+  def update(entities: List[T]): Future[Option[List[T]]] = futureResult {
+    storage.compareAndSetFun(v => entities ++ v.filterNot(id => entities.exists(_.id == id))) //todo: reduce complexity
+    Some(entities)
+  }
+
   def delete(entityId: String): Future[Boolean] = futureResult {
-    storage.getAndSet(storage.get().filterNot(_.id == entityId))
+    storage.compareAndSetFun(_.filterNot(_.id == entityId))
     true
   }
 
