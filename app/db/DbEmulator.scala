@@ -56,7 +56,7 @@ class DbEmulatorCollection[T <: WithId](defaultItems: List[T] = Nil) {
   }
 
   def update(entities: List[T]): Future[Option[List[T]]] = futureResult {
-    storage.compareAndSetFun(entities ++ _.filterNot(id => entities.exists(_.id == id))) //todo: reduce complexity
+    storage.compareAndSetFun(entities ++ _.filterNot(e => entities.exists(_.id == e.id))) //todo: reduce complexity
     Some(entities)
   }
 
