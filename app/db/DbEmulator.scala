@@ -25,6 +25,11 @@ class DbEmulatorCollection[T <: WithId](defaultItems: List[T] = Nil) {
   private val MaxRandomDelay = 100
 
   implicit private def toRichAtomicReference[V](atomicReference: AtomicReference[V]) = new {
+
+    /**
+     * Mostly copy-pasted from [[java.util.concurrent.atomic.AtomicReference]] getAndSet method.
+     * @param newValueFromOld - function: oldValue => newValue
+     */
     def compareAndSetFun(newValueFromOld: V => V): Unit = {
       while (true) {
         val oldValue = atomicReference.get
