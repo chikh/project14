@@ -27,15 +27,21 @@ class DbEmulatorCollection[T <: WithId](defaultItems: List[T] = Nil) {
   implicit private def toRichAtomicReference[V](atomicReference: AtomicReference[V]) = new {
 
     /**
-     * Mostly copy-pasted from [[java.util.concurrent.atomic.AtomicReference]] getAndSet method.
+     * Copy-pasted from [[java.util.concurrent.atomic.AtomicReference]] getAndSet method.
+     * This method is hack to increase atomicity.
+     * The only way to remove this hack is to get rid of AtomicReference storage.
      * @param newValueFromOld - function: oldValue => newValue
      */
-    def compareAndSetFun(newValueFromOld: V => V): Unit = {
+    def compareAndSetFun(newValueFromOld: V => V): V = {
+      var oldValueResult: V = null.asInstanceOf[V]
       while (true) {
         val oldValue = atomicReference.get
-        if (atomicReference.compareAndSet(oldValue, newValueFromOld(oldValue)))
-          return
+        if (atomicReference.compareAndSet(oldValue, newValueFromOld(oldValue))) {
+          oldValueResult = oldValue
+          return oldValue
+        }
       }
+      oldValueResult
     }
   }
 
@@ -55,9 +61,13 @@ class DbEmulatorCollection[T <: WithId](defaultItems: List[T] = Nil) {
     Some(entity)
   }
 
-  def update(entities: List[T]): Future[Option[List[T]]] = futureResult {
-    storage.compareAndSetFun(entities ++ _.filterNot(e => entities.exists(_.id == e.id))) //todo: reduce complexity
-    Some(entities)
+  def update(entitiesUpdateFun: List[T] => List[T], queryConditionToUpdate: List[T] => Boolean = _ => true): Future[Boolean] = futureResult {
+    queryConditionToUpdate(storage.compareAndSetFun(oldValue =>
+      if (queryConditionToUpdate(oldValue)) {
+        val newValue = entitiesUpdateFun(oldValue)
+        newValue ++ oldValue.filterNot(e => newValue.exists(_.id == e.id)) //todo: reduce complexity of N^2
+      } else oldValue
+    ))
   }
 
   def delete(entityId: String): Future[Boolean] = futureResult {
