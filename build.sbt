@@ -5,7 +5,6 @@ name := """qiwi-test-task"""
 version := "1.0-SNAPSHOT"
 
 lazy val root = (project in file(".")).enablePlugins(PlayScala).settings(
-  // Add your own project settings here
   Yeoman.yeomanSettings: _*
 )
 
@@ -15,7 +14,8 @@ libraryDependencies ++= Seq(
   jdbc,
   anorm,
   cache,
-  ws
+  ws,
+  "com.google.inject" % "guice" % "3.0"
 )
 
 resolvers += Resolver.sonatypeRepo("snapshots")
