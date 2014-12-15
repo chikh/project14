@@ -13,8 +13,8 @@ GET         /ui                  com.tuplejump.playYeoman.Yeoman.index
 GET         /assets/*file        controllers.Assets.at(path="/public", file)
 
 # REST API
-GET         /products            controllers.Application.products
+GET         /products            @controllers.Application.products
 
-POST        /user                controllers.Users.createUser
+POST        /user                @controllers.Users.createUser
 
-POST        /order               controllers.Application.makeOrder
+POST        /order               @controllers.Application.makeOrder

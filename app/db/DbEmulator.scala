@@ -6,6 +6,7 @@ import actors.Contexts._
 import models.{Product, User, WithId}
 
 import scala.concurrent.Future
+import scala.language.implicitConversions
 import scala.reflect.ClassTag
 import scala.util.Random
 
@@ -20,7 +21,7 @@ object DbEmulator {
     nameToCollection(scala.reflect.classTag[T].runtimeClass.getName).asInstanceOf[DbEmulatorCollection[T]] //todo: get rid of "asInstanceOf"
 }
 
-class DbEmulatorCollection[T <: WithId](defaultItems: List[T] = Nil) {
+private[db] class DbEmulatorCollection[T <: WithId](defaultItems: List[T] = Nil) {
   private val InitialDelay = 150
   private val MaxRandomDelay = 100
 

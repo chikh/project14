@@ -1,14 +1,16 @@
 package actions
 
-import controllers.Application._
-import db.DbEmulator
+import com.google.inject.Inject
+import controllers.Default
+import mappers.CRUDController
 import models.User
-import play.api.mvc._
 import play.api.libs.concurrent.Execution.Implicits._
+import play.api.mvc._
 
 import scala.concurrent.Future
+import scala.language.{implicitConversions, reflectiveCalls}
 
-object BasicAuth {
+class BasicAuth @Inject()(crudController: CRUDController) {
   private implicit def toUserInfoHelper(authHeaderContent: String): Object {def userInfo: Option[UserInfo]} = new {
     def userInfo: Option[UserInfo] = {
       authHeaderContent.split(" ").drop(1).headOption.flatMap { encoded =>
@@ -32,17 +34,17 @@ object BasicAuth {
     ))
 
   private def unauthorized = {
-    Unauthorized(views.html.defaultpages.unauthorized()).withHeaders("WWW-Authenticate" -> "Basic realm=\"Secured\"")
+    Default.Unauthorized(views.html.defaultpages.unauthorized()).withHeaders("WWW-Authenticate" -> "Basic realm=\"Secured\"")
   }
 
   private def validUserAccount(info: UserInfo) = {
-    DbEmulator.collection[User].find(info.login).map(_.filter(_.password == info.password))
+    crudController.read[User](info.login).map(_.filter(_.password == info.password))
   }
 
 
   private def authenticatedWithFutureUser[A]: ((Future[Option[User]]) => EssentialAction) => EssentialAction = {
     Security.Authenticated(
-      _.headers.get(AUTHORIZATION).flatMap(_.userInfo).map(validUserAccount),
+      _.headers.get(Default.AUTHORIZATION).flatMap(_.userInfo).map(validUserAccount),
       _ => unauthorized
     )
   }
